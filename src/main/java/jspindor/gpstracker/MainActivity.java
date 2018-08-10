@@ -224,13 +224,21 @@ public class MainActivity extends AppCompatActivity
     ChildEventListener childEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
             //get last data from firebase, and create marker with polyline
             Data data = dataSnapshot.getValue(Data.class);
             double latitude = data.getLatitude();
             double longitude = data.getLongitude();
             LatLng actPosition = new LatLng(latitude, longitude);
             MarkerOptions markerOptions = new MarkerOptions().position(actPosition);
+
+            String dataStr = "long:" + String.valueOf(longitude)
+                    + "lat:" + String.valueOf(latitude)
+                    + "time:" + data.getDate();
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "1");
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "DB listener - on child added (client)");
+            bundle.putString(FirebaseAnalytics.Param.VALUE, dataStr);
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             //TODO : moving actual position marker
             //if(mLastPosition == null) {
             if(marker != null)

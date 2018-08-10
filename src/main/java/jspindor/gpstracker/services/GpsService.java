@@ -77,9 +77,14 @@ public class GpsService extends Service implements LocationListener {
                 + "time:" + new Date(location.getTime()).toString();
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "0");
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "location changed");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "location changed -> save to DB");
         bundle.putString(FirebaseAnalytics.Param.VALUE, positionStr);
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        //in onCreate of your service
+        //TODO : nefunguje skusit inak !
+        /*mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
+        if(mFirebaseAnalytics != null)
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        */
         Log.e(TAG, "onLocationChanged: " + location);
         mLastLocation.set(location);
         Double longitude = Double.valueOf(location.getLongitude());
@@ -171,13 +176,13 @@ public class GpsService extends Service implements LocationListener {
         return START_NOT_STICKY;
     }
 
+    private Context mContext;
     @Override
     public void onCreate()
     {
+        mContext = this;
         super.onCreate();
         Log.e(TAG, "onCreate");
-        //in onCreate of your service
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock cpuWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "gps_service");
